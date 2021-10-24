@@ -91,17 +91,22 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         JavascriptPlaceholder placeholder = this.scriptRegistry.get(scriptKey);
         if (placeholder == null) return "";
 
-        // Has arguments
-        if (separatorIndex != -1) {
-            String[] args = StringUtils.split(
-                    identifier.substring(scriptKey.length() + 1), // identifier + '_'
-                    this.argumentSeparator
-            );
+        try {
+            // Has arguments
+            if (separatorIndex != -1) {
+                String[] args = StringUtils.split(
+                        identifier.substring(scriptKey.length() + 1), // identifier + '_'
+                        this.argumentSeparator
+                );
 
-            return placeholder.getParsedScript().onPlaceholderRequest(player, args);
+                return placeholder.getParsedScript().onPlaceholderRequest(player, args);
+            }
+
+            return placeholder.getParsedScript().onPlaceholderRequest(player);
+        } catch (Exception e) {
+            Logger.severe("An error occurred while executing a script \"" + getIdentifier() + "\"", e);
+            return "Script error (see the console)";
         }
-
-        return placeholder.getParsedScript().onPlaceholderRequest(player);
     }
 
     public String onPlaceholderRequest(Player one, Player two, String identifier) {
@@ -111,17 +116,22 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         JavascriptPlaceholder placeholder = this.scriptRegistry.get(scriptKey);
         if (placeholder == null) return "";
 
-        // Has arguments
-        if (separatorIndex != -1) {
-            String[] args = StringUtils.split(
-                    identifier.substring(scriptKey.length() + 1), // identifier + '_'
-                    this.argumentSeparator
-            );
+        try {
+            // Has arguments
+            if (separatorIndex != -1) {
+                String[] args = StringUtils.split(
+                        identifier.substring(scriptKey.length() + 1), // identifier + '_'
+                        this.argumentSeparator
+                );
 
-            return placeholder.getParsedScript().onRelPlaceholderRequest(one, two, args);
+                return placeholder.getParsedScript().onRelPlaceholderRequest(one, two, args);
+            }
+
+            return placeholder.getParsedScript().onRelPlaceholderRequest(one, two);
+        } catch (Exception e) {
+            Logger.severe("An error occurred while executing a script \"" + getIdentifier() + "\"", e);
+            return "Script error (see the console)";
         }
-
-        return placeholder.getParsedScript().onRelPlaceholderRequest(one, two);
     }
 
     public void clear() {

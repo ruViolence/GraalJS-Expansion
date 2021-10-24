@@ -85,10 +85,17 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
 
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
-        int separatorIndex = identifier.indexOf('_');
-        String scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
+        String scriptKey = identifier;
+        int separatorIndex = -1;
 
         JavascriptPlaceholder placeholder = this.scriptRegistry.get(scriptKey);
+
+        if (placeholder == null) {
+            separatorIndex = identifier.lastIndexOf('_');
+            scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
+            placeholder = this.scriptRegistry.get(scriptKey);
+        }
+
         if (placeholder == null) return "";
 
         try {
@@ -110,10 +117,17 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
     }
 
     public String onPlaceholderRequest(Player one, Player two, String identifier) {
-        int separatorIndex = identifier.indexOf('_');
-        String scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
+        String scriptKey = identifier;
+        int separatorIndex = -1;
 
         JavascriptPlaceholder placeholder = this.scriptRegistry.get(scriptKey);
+
+        if (placeholder == null) {
+            separatorIndex = identifier.lastIndexOf('_');
+            scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
+            placeholder = this.scriptRegistry.get(scriptKey);
+        }
+
         if (placeholder == null) return "";
 
         try {

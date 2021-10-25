@@ -15,7 +15,7 @@ public class GraalJSParsedScript {
         this.bindings = context.getBindings(GraalJSScriptEvaluator.JS_LANG_ID);
         context.parse(Source.create(GraalJSScriptEvaluator.JS_LANG_ID, script)).execute(); // First initialize
         Value onInitialize = this.bindings.getMember("onInitialize");
-        if (onInitialize != null) onInitialize.execute();
+        if (onInitialize != null) onInitialize.executeVoid();
         this.onPlaceholderRequest = this.bindings.getMember("onPlaceholderRequest");
         this.onRelPlaceholderRequest = this.bindings.getMember("onRelPlaceholderRequest");
     }
@@ -35,7 +35,7 @@ public class GraalJSParsedScript {
     public void terminate() {
         synchronized (this) {
             Value onTerminate = this.bindings.getMember("onTerminate");
-            if (onTerminate != null) onTerminate.execute();
+            if (onTerminate != null) onTerminate.executeVoid();
             this.context.close(true);
         }
     }

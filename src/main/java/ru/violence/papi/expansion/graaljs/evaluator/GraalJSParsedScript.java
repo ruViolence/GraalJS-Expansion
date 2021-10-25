@@ -13,7 +13,7 @@ public class GraalJSParsedScript {
     public GraalJSParsedScript(Context context, String script) {
         this.context = context;
         this.bindings = context.getBindings(GraalJSScriptEvaluator.JS_LANG_ID);
-        context.parse(Source.create(GraalJSScriptEvaluator.JS_LANG_ID, script)).execute(); // First initialize
+        context.eval(Source.create(GraalJSScriptEvaluator.JS_LANG_ID, script)); // First initialize
         Value onInitialize = this.bindings.getMember("onInitialize");
         if (onInitialize != null) onInitialize.executeVoid();
         this.onPlaceholderRequest = this.bindings.getMember("onPlaceholderRequest");

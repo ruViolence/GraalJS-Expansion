@@ -18,6 +18,9 @@ public class GraalJSParsedScript {
         if (onInitialize != null) onInitialize.executeVoid();
         this.onPlaceholderRequest = this.bindings.getMember("onPlaceholderRequest");
         this.onRelPlaceholderRequest = this.bindings.getMember("onRelPlaceholderRequest");
+        if (this.onPlaceholderRequest == null && this.onRelPlaceholderRequest == null) {
+            throw new RuntimeException("Script does not contain any onPlaceholder function");
+        }
     }
 
     public String onPlaceholderRequest(Object... params) {

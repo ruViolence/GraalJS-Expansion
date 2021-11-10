@@ -7,6 +7,7 @@ import me.clip.placeholderapi.expansion.Relational;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.violence.papi.expansion.graaljs.evaluator.GraalJSEvaluatorFactory;
 import ru.violence.papi.expansion.graaljs.script.JavascriptPlaceholder;
 import ru.violence.papi.expansion.graaljs.script.ScriptRegistry;
@@ -47,8 +48,8 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         Path scriptDirectoryPath = getPlaceholderAPI().getDataFolder().toPath().resolve("graaljsscripts");
         try {
             Files.createDirectories(scriptDirectoryPath);
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try {
@@ -67,6 +68,12 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
                 Path path = iterator.next();
                 String fileName = path.getFileName().toString();
                 String identifier = fileName.substring(0, fileName.length() - 3); // Strip ".js"
+
+                if (identifier.isEmpty()) {
+                    Logger.severe("Illegal script identifier: " + fileName);
+                    continue;
+                }
+
                 try {
                     String script = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).intern();
                     this.scriptRegistry.register(new JavascriptPlaceholder(evaluatorFactory, identifier, script));
@@ -85,27 +92,13 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
 
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
-        String scriptKey = identifier;
-        int separatorIndex = -1;
-
-        JavascriptPlaceholder placeholder = this.scriptRegistry.get(scriptKey);
-
-        if (placeholder == null) {
-            separatorIndex = identifier.lastIndexOf('_');
-            scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
-            placeholder = this.scriptRegistry.get(scriptKey);
-        }
-
+        JavascriptPlaceholder placeholder = getJSPlaceholder(identifier);
         if (placeholder == null) return "";
 
         try {
-            // Has arguments
-            if (separatorIndex != -1) {
-                String[] args = StringUtils.split(
-                        identifier.substring(scriptKey.length() + 1), // identifier + '_'
-                        this.argumentSeparator
-                );
+            String[] args = parseArgs(identifier, placeholder);
 
+            if (args != null) {
                 return placeholder.getParsedScript().onPlaceholderRequest(player, args);
             }
 
@@ -117,27 +110,13 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
     }
 
     public String onPlaceholderRequest(Player one, Player two, String identifier) {
-        String scriptKey = identifier;
-        int separatorIndex = -1;
-
-        JavascriptPlaceholder placeholder = this.scriptRegistry.get(scriptKey);
-
-        if (placeholder == null) {
-            separatorIndex = identifier.lastIndexOf('_');
-            scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
-            placeholder = this.scriptRegistry.get(scriptKey);
-        }
-
+        JavascriptPlaceholder placeholder = getJSPlaceholder(identifier);
         if (placeholder == null) return "";
 
         try {
-            // Has arguments
-            if (separatorIndex != -1) {
-                String[] args = StringUtils.split(
-                        identifier.substring(scriptKey.length() + 1), // identifier + '_'
-                        this.argumentSeparator
-                );
+            String[] args = parseArgs(identifier, placeholder);
 
+            if (args != null) {
                 return placeholder.getParsedScript().onRelPlaceholderRequest(one, two, args);
             }
 
@@ -146,6 +125,23 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
             Logger.severe("An error occurred while executing a script \"" + getIdentifier() + "\"", e);
             return "Script error (see the console)";
         }
+    }
+
+    private @Nullable JavascriptPlaceholder getJSPlaceholder(String identifier) {
+        JavascriptPlaceholder placeholder = this.scriptRegistry.get(identifier);
+        if (placeholder != null) return placeholder;
+
+        int separatorIndex = identifier.lastIndexOf('_');
+        String scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
+        return this.scriptRegistry.get(scriptKey);
+    }
+
+    private @Nullable String[] parseArgs(String identifier, JavascriptPlaceholder placeholder) {
+        // Has arguments
+        if (identifier.length() <= placeholder.getIdentifier().length()) return null;
+
+        String rawArgs = identifier.substring(placeholder.getIdentifier().length() + 1); // Trim leading "identifier + '_'"
+        return StringUtils.split(rawArgs, this.argumentSeparator);
     }
 
     public void clear() {

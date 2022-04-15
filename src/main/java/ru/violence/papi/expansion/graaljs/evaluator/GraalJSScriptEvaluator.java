@@ -2,7 +2,7 @@ package ru.violence.papi.expansion.graaljs.evaluator;
 
 import org.graalvm.polyglot.Context;
 
-public class GraalJSScriptEvaluator {
+public class GraalJSScriptEvaluator implements ScriptEvaluator {
     public static final String JS_LANG_ID = "js";
     private final Context context;
 
@@ -13,6 +13,7 @@ public class GraalJSScriptEvaluator {
                 .build();
     }
 
+    @Override
     public GraalJSParsedScript parse(String script) {
         return new GraalJSParsedScript(this.context, script);
     }

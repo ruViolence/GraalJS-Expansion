@@ -4,7 +4,7 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 
-public class GraalJSParsedScript {
+public class GraalJSParsedScript implements ParsedScript {
     private final Context context;
     private final Value bindings;
     private final Value onPlaceholderRequest;
@@ -23,18 +23,21 @@ public class GraalJSParsedScript {
         }
     }
 
+    @Override
     public String onPlaceholderRequest(Object... params) {
         synchronized (this) {
             return this.onPlaceholderRequest.execute(params).toString();
         }
     }
 
+    @Override
     public String onRelPlaceholderRequest(Object... params) {
         synchronized (this) {
             return this.onRelPlaceholderRequest.execute(params).toString();
         }
     }
 
+    @Override
     public void terminate() {
         synchronized (this) {
             Value onTerminate = this.bindings.getMember("onTerminate");

@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.violence.papi.expansion.graaljs.evaluator.GraalJSEvaluatorFactory;
+import ru.violence.papi.expansion.graaljs.evaluator.EvaluatorFactory;
 import ru.violence.papi.expansion.graaljs.script.JavascriptPlaceholder;
 import ru.violence.papi.expansion.graaljs.script.ScriptRegistry;
 import ru.violence.papi.expansion.graaljs.util.Logger;
@@ -53,7 +53,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         }
 
         try {
-            GraalJSEvaluatorFactory evaluatorFactory = new GraalJSEvaluatorFactory(this.getClass().getClassLoader());
+            EvaluatorFactory evaluatorFactory = new EvaluatorFactory(this.getClass().getClassLoader());
 
             Iterator<Path> iterator = Files.walk(scriptDirectoryPath, 1)
                     .skip(1)

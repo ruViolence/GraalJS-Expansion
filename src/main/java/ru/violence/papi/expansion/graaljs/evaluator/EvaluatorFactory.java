@@ -1,5 +1,6 @@
 package ru.violence.papi.expansion.graaljs.evaluator;
 
+import org.graalvm.polyglot.Context;
 import ru.violence.papi.expansion.graaljs.util.Logger;
 
 import javax.script.ScriptEngine;
@@ -13,12 +14,19 @@ public class EvaluatorFactory {
     }
 
     public ScriptEvaluator create() {
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
-        if (engine != null && engine.getClass().getName().equals("com.oracle.truffle.js.scriptengine.GraalJSScriptEngine")) {
-            return new GraalJSScriptEvaluator(this.classLoader);
-        } else {
-            Logger.severe("This server is not running on GraalVM!");
-            return new DummyScriptEvaluator();
+        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(Context.class.getClassLoader());
+
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
+            if (engine != null && engine.getClass().getName().equals("com.oracle.truffle.js.scriptengine.GraalJSScriptEngine")) {
+                return new GraalJSScriptEvaluator(this.classLoader);
+            } else {
+                Logger.severe("This server is not running on GraalVM!");
+                return new DummyScriptEvaluator();
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCl);
         }
     }
 }

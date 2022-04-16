@@ -1,6 +1,6 @@
 // Usage: %graaljs_chunks_count%
 
-const Bukkit = Java.type("org.bukkit.Bukkit");
+const Bukkit = bukkitClassLoader.loadClass("org.bukkit.Bukkit").static;
 
 function onPlaceholderRequest() {
     let worlds = Bukkit.getWorlds();

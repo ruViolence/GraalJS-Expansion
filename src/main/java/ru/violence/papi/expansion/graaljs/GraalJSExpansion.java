@@ -136,7 +136,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         return this.scriptRegistry.get(scriptKey);
     }
 
-    private @Nullable String[] parseArgs(String identifier, JavascriptPlaceholder placeholder) {
+    private @NotNull String @Nullable [] parseArgs(String identifier, JavascriptPlaceholder placeholder) {
         // Has arguments
         if (identifier.length() <= placeholder.getIdentifier().length()) return null;
 

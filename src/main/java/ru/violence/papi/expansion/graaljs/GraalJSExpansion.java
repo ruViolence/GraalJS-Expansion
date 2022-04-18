@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import ru.violence.papi.expansion.graaljs.evaluator.EvaluatorFactory;
 import ru.violence.papi.expansion.graaljs.script.JavascriptPlaceholder;
 import ru.violence.papi.expansion.graaljs.script.ScriptRegistry;
-import ru.violence.papi.expansion.graaljs.util.Logger;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +19,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class GraalJSExpansion extends PlaceholderExpansion implements Relational, Configurable, Cacheable {
     private final String VERSION = getClass().getPackage().getImplementationVersion();
@@ -53,7 +53,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         }
 
         try {
-            EvaluatorFactory evaluatorFactory = new EvaluatorFactory(this.getClass().getClassLoader());
+            EvaluatorFactory evaluatorFactory = new EvaluatorFactory(this, this.getClass().getClassLoader());
 
             Iterator<Path> iterator = Files.walk(scriptDirectoryPath, 1)
                     .skip(1)
@@ -70,7 +70,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
                 String identifier = fileName.substring(0, fileName.length() - 3); // Strip ".js"
 
                 if (identifier.isEmpty()) {
-                    Logger.severe("Illegal script identifier: " + fileName);
+                    log(Level.SEVERE, "Illegal script identifier: " + fileName);
                     continue;
                 }
 
@@ -78,11 +78,11 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
                     String script = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).intern();
                     this.scriptRegistry.register(new JavascriptPlaceholder(evaluatorFactory, identifier, script));
                 } catch (Exception e) {
-                    Logger.severe("An error occurred while parsing a script \"" + fileName + "\"", e);
+                    log(Level.SEVERE, "An error occurred while parsing a script \"" + fileName + "\"", e);
                 }
             }
 
-            Logger.info(this.scriptRegistry.getScriptMap().size() + " scripts loaded");
+            log(Level.INFO, this.scriptRegistry.getScriptMap().size() + " scripts loaded");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,7 +104,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
 
             return placeholder.getParsedScript().onPlaceholderRequest(player);
         } catch (Exception e) {
-            Logger.severe("An error occurred while executing a script \"" + getIdentifier() + "\"", e);
+            log(Level.SEVERE, "An error occurred while executing a script \"" + getIdentifier() + "\"", e);
             return "Script error (see the console)";
         }
     }
@@ -122,7 +122,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
 
             return placeholder.getParsedScript().onRelPlaceholderRequest(one, two);
         } catch (Exception e) {
-            Logger.severe("An error occurred while executing a script \"" + getIdentifier() + "\"", e);
+            log(Level.SEVERE, "An error occurred while executing a script \"" + getIdentifier() + "\"", e);
             return "Script error (see the console)";
         }
     }

@@ -3,7 +3,6 @@ package ru.violence.papi.expansion.graaljs.evaluator;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-import ru.violence.papi.expansion.graaljs.GraalJSExpansion;
 
 public class GraalJSParsedScript implements ParsedScript {
     private final Context context;
@@ -12,6 +11,7 @@ public class GraalJSParsedScript implements ParsedScript {
     private final Value onRelPlaceholderRequest;
 
     public GraalJSParsedScript(Context context, ClassLoader classLoader, String script) {
+        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(Context.class.getClassLoader());
 
@@ -27,7 +27,7 @@ public class GraalJSParsedScript implements ParsedScript {
                 throw new RuntimeException("Script does not contain any onPlaceholder function");
             }
         } finally {
-            Thread.currentThread().setContextClassLoader(GraalJSExpansion.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(oldCl);
         }
     }
 

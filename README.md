@@ -20,6 +20,9 @@ unpacked GraalVM, like this:
 "path-to-graalvm-folder\bin\java" -jar spigot-server.jar
 ```
 
+In some cases GraalVM does not have a "JavaScript" language by default, so you need to install it as explained
+[here](https://www.graalvm.org/22.2/reference-manual/graalvm-updater/#install-components-on-graalvm-community).
+
 That's it, your server will now run on the GraalVM JVM. You can start using this extension and coding your placeholders!
 
 # Where the scripts are stored

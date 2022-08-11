@@ -13,10 +13,11 @@ public class GraalJSScriptEvaluator implements ScriptEvaluator {
         this.classLoader = classLoader;
         ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(Context.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(Class.forName("org.graalvm.polyglot.Context").getClassLoader());
             this.context = Context.newBuilder(JS_LANG_ID)
                     .allowAllAccess(true)
                     .build();
+            this.context.getBindings(JS_LANG_ID); // Check if JavaScript language is installed
         } finally {
             Thread.currentThread().setContextClassLoader(oldCl);
         }

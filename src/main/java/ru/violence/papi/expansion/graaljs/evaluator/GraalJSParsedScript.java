@@ -1,5 +1,6 @@
 package ru.violence.papi.expansion.graaljs.evaluator;
 
+import lombok.SneakyThrows;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
@@ -10,10 +11,11 @@ public class GraalJSParsedScript implements ParsedScript {
     private final Value onPlaceholderRequest;
     private final Value onRelPlaceholderRequest;
 
+    @SneakyThrows
     public GraalJSParsedScript(Context context, ClassLoader classLoader, String script) {
         ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(Context.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(Class.forName("org.graalvm.polyglot.Context").getClassLoader());
 
             this.context = context;
             this.bindings = context.getBindings(GraalJSScriptEvaluator.JS_LANG_ID);

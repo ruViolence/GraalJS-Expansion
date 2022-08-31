@@ -1,4 +1,5 @@
 // Usage: %graaljs_example%
+//    or: %graaljs_example#arg1,arg2%
 
 function onInitialize() {
     print("Initialized");

@@ -131,7 +131,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         JavascriptPlaceholder placeholder = this.scriptRegistry.get(identifier);
         if (placeholder != null) return placeholder;
 
-        int separatorIndex = identifier.lastIndexOf('_');
+        int separatorIndex = identifier.indexOf('#');
         String scriptKey = separatorIndex != -1 ? identifier.substring(0, separatorIndex) : identifier;
         return this.scriptRegistry.get(scriptKey);
     }
@@ -140,7 +140,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
         // Has arguments
         if (identifier.length() <= placeholder.getIdentifier().length()) return null;
 
-        String rawArgs = identifier.substring(placeholder.getIdentifier().length() + 1); // Trim leading "identifier + '_'"
+        String rawArgs = identifier.substring(placeholder.getIdentifier().length() + 1); // Trim leading "identifier + '#'"
         return StringUtils.split(rawArgs, this.argumentSeparator);
     }
 

@@ -41,9 +41,6 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
     @Override
     public boolean register() {
         this.argumentSeparator = getString("argument_split", ",");
-        if (this.argumentSeparator.equals("_")) {
-            this.argumentSeparator = ",";
-        }
 
         Path scriptDirectoryPath = getPlaceholderAPI().getDataFolder().toPath().resolve("graaljsscripts");
         try {

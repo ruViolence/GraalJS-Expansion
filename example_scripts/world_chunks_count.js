@@ -1,4 +1,4 @@
-// Usage: %graaljs_world_chunks_count_<world_name>%
+// Usage: %graaljs_world_chunks_count#<world_name>%
 
 const Bukkit = bukkitClassLoader.loadClass("org.bukkit.Bukkit").static;
 

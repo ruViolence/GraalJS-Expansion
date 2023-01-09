@@ -101,7 +101,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
 
             return placeholder.getParsedScript().onPlaceholderRequest(player);
         } catch (Exception e) {
-            log(Level.SEVERE, "An error occurred while executing a script \"" + getIdentifier() + "\"", e);
+            log(Level.SEVERE, "An error occurred while executing a script \"" + identifier + "\"", e);
             return "Script error (see the console)";
         }
     }
@@ -119,7 +119,7 @@ public class GraalJSExpansion extends PlaceholderExpansion implements Relational
 
             return placeholder.getParsedScript().onRelPlaceholderRequest(one, two);
         } catch (Exception e) {
-            log(Level.SEVERE, "An error occurred while executing a script \"" + getIdentifier() + "\"", e);
+            log(Level.SEVERE, "An error occurred while executing a script \"" + identifier + "\"", e);
             return "Script error (see the console)";
         }
     }

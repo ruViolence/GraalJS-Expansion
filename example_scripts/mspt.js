@@ -1,40 +1,22 @@
 // Usage: %graaljs_mspt%
-// This script only works on Bukkit 1.12.2
+// This script tested on Paper 1.20
+// It supports RGB and smoothly changes color from green to yellow and to red
 
-const FORMAT = new (bukkitClassLoader.loadClass("java.text.DecimalFormat"))("###.00");
-const MC_SERVER = bukkitClassLoader.loadClass("net.minecraft.server.v1_12_R1.MinecraftServer").static.getServer();
-const TICK_TIME_ARRAY = MC_SERVER.h;
+const Bukkit = bukkitClassLoader.loadClass("org.bukkit.Bukkit").static;
+const MiniMessage = bukkitClassLoader.loadClass("net.kyori.adventure.text.minimessage.MiniMessage").static;
+const LegacyComponentSerializer = bukkitClassLoader.loadClass("net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer").static;
 
 function onPlaceholderRequest() {
-    return color(round(toMilliseconds(average(TICK_TIME_ARRAY))));
-}
+    let tickTime = round(Bukkit.getAverageTickTime());
+    let phase = tickTime / 50;
 
-function color(mspt) {
-    if (mspt <= 25.0) {
-        return "§a" + mspt;
-    } else if (mspt <= 40) {
-        return "§e" + mspt;
-    } else {
-        return "§c" + mspt;
-    }
-}
+    if (phase > 1) phase = 1;
+    else if (phase < 0) phase = 0;
 
-function average(arr) {
-    let i = 0;
-    for (const l of arr) {
-        i += l;
-    }
-    return i / arr.length;
-}
-
-function toMilliseconds(time) {
-    return time * 1.0E-6;
+    let component = MiniMessage.miniMessage().deserialize("<transition:#00ff00:#ffff00:#ff0000:" + phase + ">" + tickTime + "</transition>");
+    return LegacyComponentSerializer.builder().hexColors().character('&').build().serialize(component);
 }
 
 function round(value) {
-    const formatted = FORMAT.format(value);
-    if (formatted.startsWith(".")) {
-        return "0" + formatted;
-    }
-    return formatted;
+    return value | 0;
 }

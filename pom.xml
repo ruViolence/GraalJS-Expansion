@@ -6,7 +6,7 @@
 
     <groupId>ru.violence.papi.expansion</groupId>
     <artifactId>graaljs</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
     
     <properties>

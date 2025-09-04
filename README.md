@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This extension is deprecated and will no longer be maintained. Its functionality has been moved into a standalone [GraalJS](https://github.com/ruViolence/GraalJS) plugin.
+
 # GraalJS Expansion
 
 A powerful and high-performance alternative to [Javascript](https://github.com/PlaceholderAPI/Javascript-Expansion)
